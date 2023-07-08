@@ -31,6 +31,10 @@ export default function Blog(props) {
       navigate("/my-blogs");
     }
   };
+  const handleEdit = (e) => {
+    //console.log(props.id);
+    navigate("/update-blog/" + props.id);
+  };
   return (
     <Card sx={{ maxWidth: 345 }}>
       <CardHeader
@@ -48,7 +52,7 @@ export default function Blog(props) {
             {" "}
             <DeleteIcon />
           </Button>
-          <Button variant="outlined" size="small">
+          <Button variant="outlined" size="small" onClick={handleEdit}>
             {" "}
             <EditOutlinedIcon />
           </Button>

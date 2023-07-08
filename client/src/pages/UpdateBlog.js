@@ -1,11 +1,12 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography, TextField, Button } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { authActions } from "../redux/store";
 
-const CreateBlog = () => {
+const UpdateBlog = () => {
+  const { id } = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [input, setInput] = useState({
@@ -20,10 +21,20 @@ const CreateBlog = () => {
       [e.target.name]: e.target.value,
     }));
   };
+  const getBlog = async () => {
+    const { data } = await axios.get("/api/v1/blog/get-blog/" + id);
+    const temp = {
+      title: data.blog.title,
+      image: data.blog.image,
+      content: data.blog.content,
+    };
+    setInput(temp);
+    console.log(data);
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const { data } = await axios.post("/api/v1/blog/create-blog", {
+      const { data } = await axios.put("/api/v1/blog/update-blog/" + id, {
         user: localStorage.getItem("user"),
         title: input.title,
         image: input.image,
@@ -31,13 +42,17 @@ const CreateBlog = () => {
       });
       if (data.success) {
         dispatch(authActions.login());
-        alert("New Blog Created SuccessFully");
+        alert("Blog Updated SuccessFully");
         navigate("/blog");
       }
     } catch (error) {
       console.log(error);
     }
   };
+  useEffect(() => {
+    console.log("here");
+    getBlog();
+  }, []);
   return (
     <form onSubmit={handleSubmit}>
       <Box className="register">
@@ -87,4 +102,4 @@ const CreateBlog = () => {
   );
 };
 
-export default CreateBlog;
+export default UpdateBlog;
